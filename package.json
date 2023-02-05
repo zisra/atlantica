@@ -1,0 +1,19 @@
+{
+	"name": "hermes",
+	"version": "0.1.0",
+	"description": "Unopinionated JavaScript HTTP client",
+	"source": "lib/index.js",
+	"main": "dist/main.js",
+	"module": "dist/module.js",
+	"type": "module",
+	"scripts": {
+		"test": "node test.js",
+		"watch": "parcel watch",
+		"build": "parcel build"
+	},
+	"author": "Isra",
+	"license": "MIT",
+	"devDependencies": {
+		"parcel": "^2.8.3"
+	}
+}
