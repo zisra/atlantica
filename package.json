@@ -1,5 +1,5 @@
 {
-	"name": "hermes",
+	"name": "atlantica",
 	"version": "0.1.0",
 	"description": "Unopinionated JavaScript HTTP client",
 	"source": "lib/index.js",
@@ -7,13 +7,16 @@
 	"module": "dist/module.js",
 	"type": "module",
 	"scripts": {
-		"test": "node test.js",
-		"watch": "parcel watch",
-		"build": "parcel build"
+		"test": "ava",
+		"lint": "eslint .",
+		"format": "prettier --write ."
 	},
 	"author": "Isra",
 	"license": "MIT",
 	"devDependencies": {
-		"parcel": "^2.8.3"
+		"ava": "^5.1.1",
+		"eslint": "^8.33.0",
+		"eslint-config-prettier": "^8.6.0",
+		"prettier": "^2.8.3"
 	}
 }
