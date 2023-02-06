@@ -19,6 +19,9 @@
 		"promise",
 		"lightweight"
 	],
+	"bugs": {
+		"url": "https://github.com/zisra/atlantica/issues"
+	},
 	"scripts": {
 		"test": "ava",
 		"lint": "eslint .",
