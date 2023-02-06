@@ -1,6 +1,6 @@
 {
 	"name": "atlantica",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "Unopinionated JavaScript HTTP client",
 	"main": "lib/index.js",
 	"type": "module",
@@ -8,7 +8,7 @@
 		"type": "git",
 		"url": "https://github.com/zisra/atlantica.git"
 	},
-	"tags": [
+	"keywords": [
 		"http",
 		"https",
 		"client",
