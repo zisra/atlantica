@@ -132,7 +132,7 @@ test('Blob', async (t) => {
 	t.truthy(data instanceof Blob);
 });
 
-test('arrayBuffer', async (t) => {
+test('ArrayBuffer', async (t) => {
 	const data = await atlantica('http://httpbin.org/anything')
 		.query((h) => h.set('foo', 'bar').set('delete', 'delete me'))
 		.query((h) => h.remove('delete'))
@@ -140,4 +140,33 @@ test('arrayBuffer', async (t) => {
 		.send();
 
 	t.truthy(data instanceof ArrayBuffer);
+});
+
+test('Path', async (t) => {
+	const data = await atlantica('http://httpbin.org/')
+		.path('/get')
+		.response('json')
+		.send();
+
+	t.is(data.url, 'http://httpbin.org/get');
+});
+
+test('Redirects disabled', async (t) => {
+	const data = await atlantica('http://httpbin.org/absolute-redirect')
+		.path('/1')
+		.maxRedirects(0)
+		.response('full')
+		.send();
+
+	t.is(data.statusCode, 302);
+});
+
+test('Redirects enabled', async (t) => {
+	const data = await atlantica('http://httpbin.org/absolute-redirect')
+		.path('/1')
+		.maxRedirects(1)
+		.response('full')
+		.send();
+
+	t.is(data.statusCode, 200);
 });
