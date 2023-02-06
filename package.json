@@ -2,10 +2,23 @@
 	"name": "atlantica",
 	"version": "0.1.0",
 	"description": "Unopinionated JavaScript HTTP client",
-	"source": "lib/index.js",
-	"main": "dist/main.js",
-	"module": "dist/module.js",
+	"main": "lib/index.js",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/npm/cli.git"
+	},
+	"tags": [
+		"http",
+		"https",
+		"client",
+		"request",
+		"fetch",
+		"ajax",
+		"xhr",
+		"promise",
+		"lightweight"
+	],
 	"scripts": {
 		"test": "ava",
 		"lint": "eslint .",
