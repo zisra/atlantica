@@ -1,4 +1,4 @@
-# Atlantica
+# [Atlantica](https://www.npmjs.com/package/atlantica)
 
 Unopinionated JavaScript HTTP client
 
@@ -14,7 +14,7 @@ I built this package because I did not find one that met the following criteria:
 
 ## Installation
 
-```sh
+```sh-session
 npm install atlantica
 yarn add atlantica
 pnpm add atlantica
@@ -24,7 +24,7 @@ pnpm add atlantica
 
 > The following functions should be in an async context
 
-The package returns a function by default. You can use this to initialize a request, and you can specify none, two, or two options.
+The package returns a function by default. You can use this to initialize a request, and you can specify none, one, or two options
 
 ```js
 import atlantica from 'atlanica';
@@ -95,7 +95,7 @@ reguest.rootOptions(); // Set root HTTP//HTTPS options
 ```js
 request.send();
 ```
-The following shortcuts set the method, url or path, options, and send the request all in one go. 
+The following shortcuts set the method, url or path, options, and send the request all in one go
 ```js
 request.get('/get', options);
 request.get('http://httpbin.org/image/png', options);
