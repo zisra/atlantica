@@ -170,3 +170,46 @@ test('Redirects enabled', async (t) => {
 
 	t.is(data.statusCode, 200);
 });
+
+test('Timeout', async (t) => {
+	const data = atlantica('http://httpbin.org/anything').timeout(10).send();
+	await t.throwsAsync(data, {
+		instanceOf: Error,
+		message: 'Timeout reached',
+	});
+});
+
+test('Post shortcut', async (t) => {
+	const data = await atlantica().post('http://httpbin.org/post');
+
+	t.is(data.statusCode, 200);
+});
+
+test('Post string', async (t) => {
+	const data = await atlantica()
+		.body('Random string')
+		.response('json')
+		.post('http://httpbin.org/post');
+
+	t.is(data.data, 'Random string');
+});
+
+test('Post buffer', async (t) => {
+	const data = await atlantica()
+		.body(Buffer.from('Random string'))
+		.response('json')
+		.post('http://httpbin.org/post');
+
+	t.is(data.data, 'Random string');
+});
+
+test.skip('Maximum size', async (t) => {
+	const data = atlantica('http://httpbin.org/image/png').maxSize(1).send();
+	await t.throwsAsync(data);
+});
+
+test('Get shortcut (path)', async (t) => {
+	const data = await atlantica('http://httpbin.org/').get('/anything');
+
+	t.is(data.statusCode, 200);
+});
