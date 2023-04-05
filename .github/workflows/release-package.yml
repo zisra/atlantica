@@ -29,6 +29,12 @@ jobs:
       - name: Test code
         run: npm run test || echo "Tests failed but continuing..."
 
+      - name: Install NPM
+        run: npm install --global npm@latest
+
+      - name: Install NPM Publish
+        run: npm install --save-dev @actions/npm
+
       - name: Publish to NPM
         uses: actions/npm@v1
         with:
