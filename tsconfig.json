@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "esnext",
+		"moduleResolution": "node"
+	},
+	"strict": true,
+	"no-explicit-any": true
+}

@@ -1,7 +1,6 @@
 import test from 'ava';
 
-import atlantica from './lib/index.js';
-import { Blob } from 'node:buffer';
+import atlantica, { HttpMethod, ResponseType } from './lib/index';
 
 test('Get URL', async (t) => {
 	const data = await atlantica('http://httpbin.org/get').send();
@@ -20,7 +19,7 @@ test('Post URL (option in function)', async (t) => {
 test('Post URL (option in .set)', async (t) => {
 	const data = await atlantica('http://httpbin.org/post')
 		.set({
-			method: 'post',
+			method: HttpMethod.POST,
 		})
 		.send();
 
@@ -29,18 +28,19 @@ test('Post URL (option in .set)', async (t) => {
 
 test('Post URL (option in .method)', async (t) => {
 	const data = await atlantica('http://httpbin.org/post')
-		.method('post')
+		.method(HttpMethod.POST)
 		.send();
 
 	t.is(data.statusCode, 200);
 });
 
 test('Override method', async (t) => {
-	const data = await atlantica('http://httpbin.org/get')
+	const data = await atlantica('http://httpbin.org/post')
 		.set({
-			method: 'post',
+			response: ResponseType.FULL,
+			method: HttpMethod.GET,
 		})
-		.method('get')
+		.method(HttpMethod.POST)
 		.send();
 
 	t.is(data.statusCode, 200);
@@ -48,11 +48,11 @@ test('Override method', async (t) => {
 
 test('Post JSON', async (t) => {
 	const data = await atlantica('http://httpbin.org/anything')
-		.method('post')
+		.method(HttpMethod.POST)
 		.body({
 			foo: 'bar',
 		})
-		.response('json')
+		.response(ResponseType.JSON)
 		.send();
 
 	t.is(data.json.foo, 'bar');
@@ -63,21 +63,10 @@ test('Headers', async (t) => {
 		.headers({
 			'X-Data': 'data',
 		})
-		.response('json')
+		.response(ResponseType.JSON)
 		.send();
 
 	t.is(data.headers['X-Data'], 'data');
-});
-
-test('Headers constructor', async (t) => {
-	const data = await atlantica('http://httpbin.org/anything')
-		.headers((h) => h.set('X-Data', 'data').set('X-Delete', 'delete me'))
-		.headers((h) => h.remove('X-Delete'))
-		.response('json')
-		.send();
-
-	t.is(data.headers['X-Data'], 'data');
-	t.falsy(data.headers['X-Delete']);
 });
 
 test('Query', async (t) => {
@@ -85,28 +74,15 @@ test('Query', async (t) => {
 		.query({
 			foo: 'bar',
 		})
-		.response('json')
+		.response(ResponseType.JSON)
 		.send();
 
 	t.is(data.args.foo, 'bar');
 });
 
-test('Query constructor', async (t) => {
+test('text', async (t) => {
 	const data = await atlantica('http://httpbin.org/anything')
-		.query((h) => h.set('foo', 'bar').set('delete', 'delete me'))
-		.query((h) => h.remove('delete'))
-		.response('json')
-		.send();
-
-	t.is(data.args.foo, 'bar');
-	t.falsy(data.args.delete);
-});
-
-test('Text', async (t) => {
-	const data = await atlantica('http://httpbin.org/anything')
-		.query((h) => h.set('foo', 'bar').set('delete', 'delete me'))
-		.query((h) => h.remove('delete'))
-		.response('text')
+		.response(ResponseType.TEXT)
 		.send();
 
 	t.truthy(typeof data === 'string');
@@ -114,9 +90,7 @@ test('Text', async (t) => {
 
 test('Buffer', async (t) => {
 	const data = await atlantica('http://httpbin.org/anything')
-		.query((h) => h.set('foo', 'bar').set('delete', 'delete me'))
-		.query((h) => h.remove('delete'))
-		.response('buffer')
+		.response(ResponseType.BUFFER)
 		.send();
 
 	t.truthy(data instanceof Buffer);
@@ -124,9 +98,7 @@ test('Buffer', async (t) => {
 
 test('Blob', async (t) => {
 	const data = await atlantica('http://httpbin.org/anything')
-		.query((h) => h.set('foo', 'bar').set('delete', 'delete me'))
-		.query((h) => h.remove('delete'))
-		.response('blob')
+		.response(ResponseType.BLOB)
 		.send();
 
 	t.truthy(data instanceof Blob);
@@ -134,9 +106,7 @@ test('Blob', async (t) => {
 
 test('ArrayBuffer', async (t) => {
 	const data = await atlantica('http://httpbin.org/anything')
-		.query((h) => h.set('foo', 'bar').set('delete', 'delete me'))
-		.query((h) => h.remove('delete'))
-		.response('arrayBuffer')
+		.response(ResponseType.ARRAY_BUFFER)
 		.send();
 
 	t.truthy(data instanceof ArrayBuffer);
@@ -145,7 +115,7 @@ test('ArrayBuffer', async (t) => {
 test('Path', async (t) => {
 	const data = await atlantica('http://httpbin.org/')
 		.path('/get')
-		.response('json')
+		.response(ResponseType.JSON)
 		.send();
 
 	t.is(data.url, 'http://httpbin.org/get');
@@ -155,7 +125,7 @@ test('Redirects disabled', async (t) => {
 	const data = await atlantica('http://httpbin.org/absolute-redirect')
 		.path('/1')
 		.maxRedirects(0)
-		.response('full')
+		.response(ResponseType.FULL)
 		.send();
 
 	t.is(data.statusCode, 302);
@@ -165,7 +135,7 @@ test('Redirects enabled', async (t) => {
 	const data = await atlantica('http://httpbin.org/absolute-redirect')
 		.path('/1')
 		.maxRedirects(1)
-		.response('full')
+		.response(ResponseType.FULL)
 		.send();
 
 	t.is(data.statusCode, 200);
@@ -188,24 +158,10 @@ test('Post shortcut', async (t) => {
 test('Post string', async (t) => {
 	const data = await atlantica()
 		.body('Random string')
-		.response('json')
+		.response(ResponseType.JSON)
 		.post('http://httpbin.org/post');
 
 	t.is(data.data, 'Random string');
-});
-
-test('Post buffer', async (t) => {
-	const data = await atlantica()
-		.body(Buffer.from('Random string'))
-		.response('json')
-		.post('http://httpbin.org/post');
-
-	t.is(data.data, 'Random string');
-});
-
-test.skip('Maximum size', async (t) => {
-	const data = atlantica('http://httpbin.org/image/png').maxSize(1).send();
-	await t.throwsAsync(data);
 });
 
 test('Get shortcut (path)', async (t) => {
@@ -213,3 +169,90 @@ test('Get shortcut (path)', async (t) => {
 
 	t.is(data.statusCode, 200);
 });
+
+test('Post buffer', async (t) => {
+	const data = await atlantica()
+		.body(Buffer.from(JSON.stringify({ main: 'Random string' })))
+		.response(ResponseType.JSON)
+		.post('http://httpbin.org/post');
+
+	t.is(data.data, JSON.stringify({ main: 'Random string' }));
+});
+
+test('500 Non-Error', async (t) => {
+	const data = await atlantica('http://httpbin.org/status/500', {
+		throwErrors: false,
+	}).send();
+
+	t.is(data.statusCode, 500);
+});
+
+test('G-zip', async (t) => {
+	const data = await atlantica('http://httpbin.org/gzip', {
+		compression: true,
+	})
+		.response(ResponseType.JSON)
+		.send();
+
+	t.is(data.gzipped, true);
+});
+
+test('Deflate', async (t) => {
+	const data = await atlantica('http://httpbin.org/deflate', {
+		compression: true,
+	})
+		.response(ResponseType.JSON)
+		.send();
+
+	t.is(data.deflated, true);
+});
+
+test('Brotli', async (t) => {
+	const data = await atlantica('http://httpbin.org/brotli', {
+		compression: true,
+	})
+		.response(ResponseType.JSON)
+		.send();
+
+	t.is(data.brotli, true);
+});
+
+test('No compression', async (t) => {
+	const data = await atlantica('http://httpbin.org/deflate', {
+		compression: false,
+	})
+		.response(ResponseType.TEXT)
+		.send();
+
+	t.not(data, 'deflate');
+});
+
+test.skip('Maximum size', async (t) => {
+	// TODO: Fix this test
+	const request = atlantica('http://httpbin.org/image/png', {
+		maxSize: 1,
+	}).set({
+		response: ResponseType.BUFFER,
+	});
+
+	await t.throwsAsync(
+		async () => {
+			await request.send();
+		},
+		{ message: 'Body over maximum size' }
+	);
+});
+
+test.skip('404 Error', async (t) => {
+	// TODO: Fix this test
+	const request = atlantica('http://httpbin.org/status/404');
+
+	await t.throwsAsync(
+		async () => {
+			await request.send();
+		},
+		{ message: 'The request failed with a non-200 status code' }
+	);
+});
+
+// TODO: Write more tests

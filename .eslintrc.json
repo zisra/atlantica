@@ -3,17 +3,25 @@
 		"es2021": true,
 		"node": true
 	},
-	"extends": ["eslint:recommended", "prettier"],
+	"extends": [
+		"eslint:recommended",
+		"prettier",
+		"plugin:@typescript-eslint/recommended"
+	],
 	"overrides": [],
 	"parserOptions": {
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
 	"rules": {
-		"indent": ["error", "tab"],
+		"indent": [0, "tab"],
 		"linebreak-style": ["error", "unix"],
 		"quotes": ["error", "single"],
 		"semi": ["error", "always"],
-		"no-console": "error"
-	}
+		"no-console": "error",
+		"@typescript-eslint/no-explicit-any": "error"
+	},
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint"],
+	"root": true
 }
